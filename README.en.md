@@ -10,8 +10,8 @@ Developed with Qt(C++) and mainly divided into two models: PaintArea & ComputeMo
 #### Instructions
 
 1.  Please put all code FILEs into one single folders and then open .pro file with Qt Creator.
-2.  Ensure each part you draw is correct.I've introduced 'magnetic' design for drawing vertex.Make it sure that there is no unnecessary / wrongly placed vertex here. Undo feature is on the schedule.
-3.  xxxx
+2.  Ensure each part you draw is correct.I've introduced 'magnetic' design for drawing vertex.Make it sure that there is no unnecessary / wrongly placed vertex here. 
+3.  The user is allowed to set time direction.
 
 #### Contribution
 

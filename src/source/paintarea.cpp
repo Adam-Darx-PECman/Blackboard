@@ -1,8 +1,4 @@
 #include "paintarea.h"
-#include <QPainter>
-#include <QLineF>
-#include <QRect>
-#include <QDebug>
 
 PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
 {
@@ -16,6 +12,9 @@ PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
     dots = new QList<QPoint>;
     labels = new QList<std::string>;
     l_points = new QList<QPointF>;
+
+    statusOfMem = new QList<Status>;
+    mem = new QStack<QPoint>;
 }
 
 void PaintArea::paintEvent(QPaintEvent *)
@@ -94,18 +93,18 @@ void PaintArea::mousePressEvent(QMouseEvent *e)
     beg = e->pos();
     switch(gadget)
     {
-        case wave:w_begs->append(beg);break;
-        case line:s_begs->append(beg);break;
-        case dot:dots->append(beg);update();break;
+        case wave:w_begs->append(beg);statusOfMem->append(Wave);break;
+        case line:s_begs->append(beg);statusOfMem->append(Line);break;
+        case dot:dots->append(beg);statusOfMem->append(Dot);update();break;
         default:break;
     }
-    flag = true;
+    startDragging = true;
 }
 
 void PaintArea::mouseMoveEvent(QMouseEvent *e)
 {
     end = e->pos();
-    if(flag)
+    if(startDragging)
     {
         switch(gadget)
         {
@@ -114,7 +113,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *e)
             case dot:dots->replace(dots->size()-1,end);break;
             default:break;
         }
-        flag = false;
+        startDragging = false;
     } else {
         switch(gadget)
         {
@@ -173,6 +172,8 @@ void PaintArea::on_compute(){
 
 void PaintArea::mark(QList<QList<Particle>> l)
 {
+    l_points->clear();
+    labels->clear();
     for(auto particles : l)
         for(auto particle : particles)
         {
@@ -200,6 +201,57 @@ void PaintArea::clean()
     dots = new QList<QPoint>;
     labels = new QList<std::string>;
     l_points = new QList<QPointF>;
+    update();
+}
+
+void PaintArea::undo()
+{
+    switch(statusOfMem->at(statusOfMem->size()-(offset++)-1))
+    {
+    case Line:
+        if(s_begs->empty())
+            return;
+        mem->push(s_begs->last());
+        s_begs->pop_back();
+        mem->push(s_ends->last());
+        s_ends->pop_back();
+        break;
+    case Wave:
+        if(w_begs->empty())
+            return;
+        mem->push(w_begs->last());
+        w_begs->pop_back();
+        mem->push(w_ends->last());
+        w_ends->pop_back();
+        break;
+    case Dot:
+        if(dots->empty())
+            return;
+        mem->push(dots->last());
+        dots->pop_back();
+        break;
+    }
+    update();
+}
+
+void PaintArea::redo()
+{
+    if(mem->empty())
+        return;
+    switch(statusOfMem->at(statusOfMem->size()-(--offset)-1))
+    {
+    case Line:
+        s_ends->append(mem->pop());
+        s_begs->append(mem->pop());
+        break;
+    case Wave:
+        w_ends->append(mem->pop());
+        w_begs->append(mem->pop());
+        break;
+    case Dot:
+        dots->append(mem->pop());
+        break;
+    }
     update();
 }
 

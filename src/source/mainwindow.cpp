@@ -8,13 +8,34 @@ MainWindow::MainWindow(QWidget *parent)
     photonButton = new QPushButton("Photon");
     vertexButton = new QPushButton("Vertex");
     computeButton = new QPushButton("Compute");
+    undoButton = new QPushButton("Undo");
+    redoButton = new  QPushButton("Redo");
     cleanButton = new QPushButton("Clean");
     buttonMenu = new QGridLayout;
+    featureMenu = new QGridLayout;
+    featureMenu->addWidget(undoButton,0,0);
+    featureMenu->addWidget(redoButton,0,1);
+
     buttonMenu->addWidget(electronButton,0,0);
     buttonMenu->addWidget(photonButton,1,0);
     buttonMenu->addWidget(vertexButton,2,0);
     buttonMenu->addWidget(computeButton,3,0);
-    buttonMenu->addWidget(cleanButton,4,0);
+    buttonMenu->addLayout(featureMenu,4,0);
+    buttonMenu->addWidget(cleanButton,5,0);
+
+    dial = new QDial;
+    dial->setMinimum(0);
+    dial->setMaximum(359);
+    dial->setMinimumHeight(180);
+    dial->setMinimumWidth(180);
+    dial->setPageStep(25);
+    dial->setNotchTarget(2);
+    dial->setNotchesVisible(true);
+
+    sbox = new QSpinBox;
+    sbox->setMaximum(359);
+    sbox->setMinimum(0);
+    sbox->setMinimumHeight(30);
 
     QString introduction = "\nBlackboard致力于简化费曼图计算过程\n"
                            "所给出的振幅均为Wolfram Mathematica代码\n"
@@ -29,7 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
     leftLayout = new QGridLayout;
     leftLayout->addWidget(profile,0,0,Qt::AlignTop);
     leftLayout->addWidget(intro,1,0,Qt::AlignTop);
-    leftLayout->addLayout(buttonMenu,2,0,Qt::AlignTop);
+    leftLayout->addWidget(dial,2,0,Qt::AlignTop);
+    leftLayout->addWidget(sbox, 3,0, Qt::AlignTop);
+    leftLayout->addLayout(buttonMenu,4,0,Qt::AlignTop);
 
     paintArea = new PaintArea;
     computeModel = new ComputeModel;
@@ -51,7 +74,12 @@ MainWindow::MainWindow(QWidget *parent)
             computeModel,SLOT(on_compute(QList<QPoint>*, QList<QPoint>*, QList<QPoint>*, QList<QPoint>*, QList<QPoint>*)));
     connect(computeModel,SIGNAL(on_mark(QList<QList<Particle>>)),paintArea,SLOT(mark(QList<QList<Particle>>)));
 
+    connect(undoButton, SIGNAL(clicked()),paintArea,SLOT(undo()));
+    connect(redoButton, SIGNAL(clicked()),paintArea,SLOT(redo()));
     connect(cleanButton, SIGNAL(clicked()), this, SLOT(on_cleanButton_triggered()));
+
+    connect(dial,SIGNAL(valueChanged(int)), this, SLOT(on_angle_changed(int)));
+    connect(sbox,SIGNAL(valueChanged(int)),this, SLOT(on_number_changed(int)));
 }
 
 void MainWindow::on_photonButton_triggered()
@@ -73,3 +101,16 @@ void MainWindow::on_cleanButton_triggered()
 {
     paintArea->clean();
 }
+
+void MainWindow::on_angle_changed(int angle)
+{
+    computeModel->setAngle(angle);
+    sbox->setValue(angle);
+}
+
+void MainWindow::on_number_changed(int number)
+{
+    computeModel->setAngle(number);
+    dial->setValue(number);
+}
+

@@ -7,8 +7,9 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QPushButton>
-#include <QPixmap>
 #include <QDate>
+#include <QDial>
+#include <QSpinBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,7 +27,11 @@ private:
     QPushButton* photonButton;
     QPushButton* vertexButton;
     QPushButton* computeButton;
+    QPushButton* undoButton;
+    QPushButton* redoButton;
     QPushButton* cleanButton;
+    QDial* dial;
+    QSpinBox* sbox;
     QLabel* intro;
     QLabel* profile;
     PaintArea* paintArea;
@@ -36,11 +41,14 @@ private:
     QGridLayout* leftLayout;
     QGridLayout* rightLayout;
     QGridLayout* buttonMenu;
+    QGridLayout* featureMenu;
 protected slots:
     void on_electronButton_triggered();
     void on_photonButton_triggered();
     void on_vertexButton_triggered();
     void on_cleanButton_triggered();
+    void on_angle_changed(int);
+    void on_number_changed(int);
 };
 
 #endif // MAINWINDOW_H

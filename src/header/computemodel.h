@@ -19,12 +19,15 @@ private:
     double direction(QPoint, double angle);
     double distance(QPoint, QPoint);
 public:
+    double angle = 0;
+
     explicit ComputeModel(QWidget *parent = nullptr);
 signals:
     void on_mark(QList<QList<Particle>>);
 public slots:
     void on_compute(QList<QPoint>*, QList<QPoint>*, QList<QPoint>*, QList<QPoint>*, QList<QPoint>*);
     void paintEvent(QPaintEvent *);
+    void setAngle(int);
 };
 
 #endif // COMPUTEMODEL_H

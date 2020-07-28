@@ -6,7 +6,9 @@
 #include <QPen>
 #include <QMouseEvent>
 #include <QList>
-#include <QMap>
+#include <QStack>
+#include <QPainter>
+#include <QLineF>
 #include "particle.h"
 
 class PaintArea : public QWidget
@@ -14,11 +16,13 @@ class PaintArea : public QWidget
     Q_OBJECT
 public:
     enum Gadget{line, wave, dot};
+    enum Status{Line, Wave, Dot};
     explicit PaintArea(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent*);
     void mouseMoveEvent(QMouseEvent*);
     void mousePressEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
+
     void setGadget(Gadget);
     void clean();
 
@@ -28,6 +32,8 @@ signals:
 public slots:
     void on_compute();
     void mark(QList<QList<Particle>>);
+    void undo();
+    void redo();
 private:
     Gadget gadget;
     QPoint beg;
@@ -39,7 +45,12 @@ private:
     QList<QPoint>* dots;
     QList<std::string>* labels;
     QList<QPointF>* l_points;
-    bool flag;
+
+    QList<Status>* statusOfMem;
+    int offset = 0;
+    QStack<QPoint>* mem;
+
+    bool startDragging;
 
     void drawWave(QPainter &, const QPoint &, const QPoint &);
     void drawLine(QPainter &, const QPoint &, const QPoint &);
