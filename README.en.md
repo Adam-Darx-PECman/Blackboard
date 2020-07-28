@@ -1,36 +1,22 @@
 # Blackboard
 
 #### Description
-一定程度上简化费曼图的绘制与计算
+A cute program simplifing the drawing and calculation of Feynman diagrams.
 
 #### Software Architecture
-Software architecture description
+Developed with Qt(C++) and mainly divided into two models: PaintArea & ComputeModel, the program generates automatically corresponding Mathematica code.
 
-#### Installation
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
 
 #### Instructions
 
-1.  xxxx
-2.  xxxx
+1.  Please put all code FILEs into one single folders and then open .pro file with Qt Creator.
+2.  Ensure each part you draw is correct.I've introduced 'magnetic' design for drawing vertex.Make it sure that there is no unnecessary / wrongly placed vertex here. Undo feature is on the schedule.
 3.  xxxx
 
 #### Contribution
 
 1.  Fork the repository
-2.  Create Feat_xxx branch
+2.  Create Feat_xxx / Fix_xxx branch
 3.  Commit your code
 4.  Create Pull Request
 
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
