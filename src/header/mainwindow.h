@@ -24,7 +24,9 @@ public:
 protected:
 private:
     QPushButton* electronButton;
+    QPushButton* electronArcButton;
     QPushButton* photonButton;
+    QPushButton* photonArcButton;
     QPushButton* vertexButton;
     QPushButton* computeButton;
     QPushButton* undoButton;
@@ -40,11 +42,16 @@ private:
     QGridLayout* mainLayout;
     QGridLayout* leftLayout;
     QGridLayout* rightLayout;
+
+    QGridLayout* electronMenu;
+    QGridLayout* photonMenu;
     QGridLayout* buttonMenu;
     QGridLayout* featureMenu;
 protected slots:
     void on_electronButton_triggered();
+    void on_electronArcButton_triggered();
     void on_photonButton_triggered();
+    void on_photonArcButton_triggered();
     void on_vertexButton_triggered();
     void on_cleanButton_triggered();
     void on_angle_changed(int);

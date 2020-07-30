@@ -15,8 +15,8 @@ class PaintArea : public QWidget
 {
     Q_OBJECT
 public:
-    enum Gadget{line, wave, dot};
-    enum Status{Line, Wave, Dot};
+    enum Gadget{line, curvedLine, curvedWave, wave, dot};
+    enum Status{Line, CurvedLine, CurvedWave, Wave, Dot};
     explicit PaintArea(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent*);
     void mouseMoveEvent(QMouseEvent*);
@@ -26,6 +26,7 @@ public:
     void setGadget(Gadget);
     void clean();
 
+    double direction(const QPoint &,double);
     double distance(const QPoint &, const QPoint &);
 signals:
     void compute(QList<QPoint>*, QList<QPoint>*, QList<QPoint>*, QList<QPoint>*, QList<QPoint>*);
@@ -38,13 +39,18 @@ private:
     Gadget gadget;
     QPoint beg;
     QPoint end;
-    QList<QPoint>* s_begs;
-    QList<QPoint>* s_ends;
+    QList<QPoint>* l_begs;
+    QList<QPoint>* l_ends;
     QList<QPoint>* w_begs;
     QList<QPoint>* w_ends;
     QList<QPoint>* dots;
     QList<std::string>* labels;
     QList<QPointF>* l_points;
+
+    QList<QPoint>* cl_begs;
+    QList<QPoint>* cl_ends;
+    QList<QPoint>* cw_begs;
+    QList<QPoint>* cw_ends;
 
     QList<Status>* statusOfMem;
     int offset = 0;
@@ -55,6 +61,10 @@ private:
     void drawWave(QPainter &, const QPoint &, const QPoint &);
     void drawLine(QPainter &, const QPoint &, const QPoint &);
     void drawDot(QPainter &, const QPoint &);
+
+    void drawCurvedLine(QPainter &, const QPoint &, const QPoint &);
+    void drawCurvedWave(QPainter &, const QPoint &, const QPoint &);
+    int sign(double);
 };
 
 #endif // PAINTAREA_H
