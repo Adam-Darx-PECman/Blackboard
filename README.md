@@ -13,9 +13,10 @@
 
 #### 使用说明
 
-1.  目前版本(1.0.1)允许自定义时间正方向偏角
-2.  务必保证每一步都画对，顶角处采用"磁贴"设计，自动吸附15像素半径内线的端点.须保证没有多余/错置顶点.
-3.  生成的Mathematica代码需要包FeynCalc,详见[FeynCalc](https://feyncalc.github.io/)
+1.  目前版本(1.0.2)支持curvedLine和curvedWave，使得计算高阶过程成为可能
+2.  允许自定义时间正方向偏角
+3.  务必保证每一步都画对，顶角处采用"磁贴"设计，自动吸附15像素半径内线的端点.须保证没有多余/错置顶点.
+4.  生成的Mathematica代码需要包FeynCalc,详见[FeynCalc](https://feyncalc.github.io/)
 
 #### 参与贡献
 
