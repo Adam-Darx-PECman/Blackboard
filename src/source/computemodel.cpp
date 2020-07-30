@@ -214,7 +214,7 @@ void ComputeModel::on_compute(QList<QPoint>* s_begs, QList<QPoint>* s_ends, QLis
     for(auto item : ingoing_positron)
         str = str+"(SpinorV"+"["+item.name+",SMP[\"m_e\"]])";
     for(int i = 0;i < ingoing_photon.size();i++)
-        str = str+"(Polarizationstd::vector["+ingoing_photon.at(i).name+","+indices->at(i).toStdString()+"])";
+        str = str+"(PolarizationVector["+ingoing_photon.at(i).name+","+indices->at(i).toStdString()+"])";
     //2.顶角因子
     for(int i = 0;i < vertex.size();i++)
         str = str+"(I*SMP[\"g\"]*"+"DiracMatrix["+indices->at(i).toStdString()+"])";
@@ -283,7 +283,7 @@ void ComputeModel::on_compute(QList<QPoint>* s_begs, QList<QPoint>* s_ends, QLis
     for(auto item : outgoing_positron)
         str = str + "(SpinorVBar" + "[" + item.name + ",m])";
     for(int i = 0;i < outgoing_photon.size();i++)
-        str = str + "(Conjugate[Polarizationstd::vector[" + outgoing_photon.at(i).name + ","+indices->at(i+ingoing_photon.size()).toStdString()+"]])";
+        str = str + "(Conjugate[PolarizationVector[" + outgoing_photon.at(i).name + ","+indices->at(i+ingoing_photon.size()).toStdString()+"]])";
 
     //6.积掉内线动量(由于MMA限制，手动积掉Delta函数)
 //    std::string tmp;
