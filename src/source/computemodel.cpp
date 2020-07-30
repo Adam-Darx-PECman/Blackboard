@@ -1,4 +1,5 @@
 #include "computemodel.h"
+#include <QDebug>
 
 ComputeModel::ComputeModel(QWidget *parent) : QWidget(parent)
 {
@@ -83,6 +84,11 @@ double ComputeModel::distance(QPoint a, QPoint b)
     return sqrt((a.x()-b.x())*(a.x()-b.x()) + (a.y()-b.y())*(a.y()-b.y()));
 }
 
+void ComputeModel::setAngle(int value)
+{
+    angle = value;
+}
+
 int ComputeModel::findMaximumIn(QList<QPoint>* l, double angle)
 {
     int index = 0;
@@ -111,13 +117,12 @@ int ComputeModel::findMinimumIn(QList<QPoint>* l, double angle)
     return index;
 }
 
-void ComputeModel::on_compute(QList<QPoint>* s_begs, QList<QPoint>* s_ends, QList<QPoint>* w_begs, QList<QPoint>* w_ends, QList<QPoint>* dots)
+void ComputeModel::on_compute(QList<QPoint>* l_begs, QList<QPoint>* l_ends, QList<QPoint>* w_begs, QList<QPoint>* w_ends, QList<QPoint>* dots)
 {
     if(dots->empty())
         return;
     std::string str;
 
-    double angle = 0;
     QPoint beg = dots->at(findMinimumIn(dots, angle));
     QPoint end = dots->at(findMaximumIn(dots, angle));
 
@@ -131,25 +136,25 @@ void ComputeModel::on_compute(QList<QPoint>* s_begs, QList<QPoint>* s_ends, QLis
     QList<Particle> propagator_photon;
     auto vertex = *dots;      //默认全部顶角有效，后期可根据分析找到有效顶角，或提供删除/撤销功能，DATE:2020年7月23日
 
-    for(int i = 0; i < s_begs->size();i++)
-        if(!dots->contains(s_begs->at(i)))
+    for(int i = 0; i < l_begs->size();i++)
+        if(!dots->contains(l_begs->at(i)))
         {
-            if(direction(s_begs->at(i),angle) > direction(beg,angle))
-                outgoing_positron.append(Particle("positron"+std::to_string(outgoing_positron.size()),s_begs->at(i),s_ends->at(i)));
-            else if(direction(s_begs->at(i),angle) < direction(beg,angle))
-                ingoing_electron.append(Particle("electron"+std::to_string(ingoing_electron.size()),s_begs->at(i),s_ends->at(i)));
+            if(direction(l_begs->at(i),angle) > direction(beg,angle))
+                outgoing_positron.append(Particle("positron"+std::to_string(outgoing_positron.size()),l_begs->at(i),l_ends->at(i)));
+            else if(direction(l_begs->at(i),angle) < direction(beg,angle))
+                ingoing_electron.append(Particle("electron"+std::to_string(ingoing_electron.size()),l_begs->at(i),l_ends->at(i)));
         }
-    for(int i = 0; i < s_ends->size();i++)
-        if(!dots->contains(s_ends->at(i)))
+    for(int i = 0; i < l_ends->size();i++)
+        if(!dots->contains(l_ends->at(i)))
         {
-            if(direction(s_ends->at(i),angle) > direction(beg,angle))
-                outgoing_electron.append(Particle("electron"+std::to_string(outgoing_electron.size()),s_begs->at(i),s_ends->at(i)));
-            else if(direction(s_ends->at(i),angle) < direction(beg,angle))
-                ingoing_positron.append(Particle("positron"+std::to_string(ingoing_positron.size()),s_begs->at(i),s_ends->at(i)));
+            if(direction(l_ends->at(i),angle) > direction(beg,angle))
+                outgoing_electron.append(Particle("electron"+std::to_string(outgoing_electron.size()),l_begs->at(i),l_ends->at(i)));
+            else if(direction(l_ends->at(i),angle) < direction(beg,angle))
+                ingoing_positron.append(Particle("positron"+std::to_string(ingoing_positron.size()),l_begs->at(i),l_ends->at(i)));
         }
-    for(int i = 0; i < s_begs->size();i++)
-        if(dots->contains(s_begs->at(i)) && dots->contains(s_ends->at(i)))
-            propagator_electron.append(Particle("electronpropagator"+std::to_string(propagator_electron.size()),s_begs->at(i),s_ends->at(i)));
+    for(int i = 0; i < l_begs->size();i++)
+        if(dots->contains(l_begs->at(i)) && dots->contains(l_ends->at(i)))
+            propagator_electron.append(Particle("electronpropagator"+std::to_string(propagator_electron.size()),l_begs->at(i),l_ends->at(i)));
     //重整光子列表 DATE:2020年7月23日
     for(int i = 0;i < w_begs->size();i++)
         if(direction(w_begs->at(i),angle) > direction(w_ends->at(i),angle))
@@ -274,6 +279,7 @@ void ComputeModel::on_compute(QList<QPoint>* s_begs, QList<QPoint>* s_ends, QLis
         if(!tmp.empty())
             tmp.pop_back();
         deltas.append(tmp);
+        qDebug()<<QString().fromStdString(tmp)<<endl;
         //str.append("DiracDelta["+tmp+"])";
     }
 
@@ -299,7 +305,7 @@ void ComputeModel::on_compute(QList<QPoint>* s_begs, QList<QPoint>* s_ends, QLis
     for(int i = 0; i < deltas.size();i++)
     {
         auto momenta = split(deltas.at(i),'+');
-        for(int j = 0; j < ingoing_photon.size() + ingoing_electron.size() + ingoing_positron.size(); j++)
+        for(int j = 0; j <= propagator_photon.size()+propagator_electron.size(); j++)
         {
             int index = 0;
             int FLAG = 0;
@@ -338,9 +344,12 @@ void ComputeModel::on_compute(QList<QPoint>* s_begs, QList<QPoint>* s_ends, QLis
             }break;
             default:break;
             }
+            if(internal_exp.empty())
+                continue;
             str = subreplace(str,"q"+std::to_string(j),internal_exp);
             for(int l = 0; l < deltas.size();l++)
                 deltas[l] = subreplace(deltas[l],"q"+std::to_string(j),internal_exp);
+            qDebug()<<"("<<QString().fromStdString(deltas.at(i))<<","<<j<<"):"<<QString().fromStdString(internal_exp)<<endl;
         }
         deltas.replace(i,"");
     }

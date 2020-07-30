@@ -5,19 +5,30 @@ MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
     electronButton = new QPushButton("Electron");
+    electronArcButton = new QPushButton("ElectronArc");
     photonButton = new QPushButton("Photon");
+    photonArcButton = new QPushButton("PhotonArc");
     vertexButton = new QPushButton("Vertex");
     computeButton = new QPushButton("Compute");
     undoButton = new QPushButton("Undo");
     redoButton = new  QPushButton("Redo");
     cleanButton = new QPushButton("Clean");
+
+    electronMenu = new QGridLayout;
+    photonMenu = new QGridLayout;
     buttonMenu = new QGridLayout;
     featureMenu = new QGridLayout;
     featureMenu->addWidget(undoButton,0,0);
     featureMenu->addWidget(redoButton,0,1);
 
-    buttonMenu->addWidget(electronButton,0,0);
-    buttonMenu->addWidget(photonButton,1,0);
+    electronMenu->addWidget(electronButton,0,0);
+    electronMenu->addWidget(electronArcButton,0,1);
+
+    photonMenu->addWidget(photonButton,0,0);
+    photonMenu->addWidget(photonArcButton,0,1);
+
+    buttonMenu->addLayout(electronMenu,0,0);
+    buttonMenu->addLayout(photonMenu,1,0);
     buttonMenu->addWidget(vertexButton,2,0);
     buttonMenu->addWidget(computeButton,3,0);
     buttonMenu->addLayout(featureMenu,4,0);
@@ -41,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
                            "所给出的振幅均为Wolfram Mathematica代码\n"
                            "必需的包: FeynCalc\n"
                            "作者邮箱: 762420244@qq.com\n";
-    intro = new QLabel("本软件由 Adam Darx(PECman) 开发\n版本号: 1.0.0\n编译日期: "+QDate().currentDate().toString()+introduction);
+    intro = new QLabel("本软件由 Adam Darx(PECman) 开发\n版本号: 1.0.2\n编译日期: "+QDate().currentDate().toString()+introduction);
     intro->setFont(QFont("Microsoft JhengHei",8));
     intro->adjustSize();
     profile = new QLabel();
@@ -66,7 +77,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setLayout(mainLayout);
     connect(electronButton, SIGNAL(clicked()), this, SLOT(on_electronButton_triggered()));
+    connect(electronArcButton, SIGNAL(clicked()), this, SLOT(on_electronArcButton_triggered()));
     connect(photonButton, SIGNAL(clicked()), this, SLOT(on_photonButton_triggered()));
+    connect(photonArcButton, SIGNAL(clicked()), this, SLOT(on_photonArcButton_triggered()));
     connect(vertexButton, SIGNAL(clicked()), this, SLOT(on_vertexButton_triggered()));
 
     connect(computeButton,SIGNAL(clicked()), paintArea, SLOT(on_compute()));
@@ -87,9 +100,19 @@ void MainWindow::on_photonButton_triggered()
     paintArea->setGadget(paintArea->wave);
 }
 
+void MainWindow::on_photonArcButton_triggered()
+{
+    paintArea->setGadget(paintArea->curvedWave);
+}
+
 void MainWindow::on_electronButton_triggered()
 {
     paintArea->setGadget(paintArea->line);
+}
+
+void MainWindow::on_electronArcButton_triggered()
+{
+    paintArea->setGadget(paintArea->curvedLine);
 }
 
 void MainWindow::on_vertexButton_triggered()
